@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AccountActivity">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@+id/profile_image"
+            android:background="@drawable/background_image"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_150sdp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_distance"
+            android:layout_marginTop="@dimen/_18sdp"
+            android:textColor="@color/black"/>
+        <SeekBar
+            android:id="@+id/distance"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:min="1"
+            android:max="1000"
+            android:progress="1"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/seekbar_text"
+            android:textColor="@color/black"
+            android:visibility="invisible"/>
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_35sdp"
+            android:id="@+id/active_or_not"
+            android:text="@string/am_i_active_for_search"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/homeImage"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_home"
+            android:padding="@dimen/_10sdp"
+            android:contentDescription="@string/app_name" />
+
+        <ImageView
+            android:id="@+id/searchImage"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_search"
+            android:padding="@dimen/_10sdp"
+            android:contentDescription="@string/app_name" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/accountImage"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_account"
+            android:paddingTop="10dp"
+            app:riv_oval="true"
+            android:paddingBottom="10dp"
+            app:riv_corner_radius="10dp"
+            android:contentDescription="@string/app_name" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

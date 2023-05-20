@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "486653846215",
+    "project_id": "c-find-8b60e",
+    "storage_bucket": "c-find-8b60e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:486653846215:android:73a09bf54151ea927d94e2",
+        "android_client_info": {
+          "package_name": "com.ghovo.c_find_"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "486653846215-gsb70vptumotei196g4st6d492bbup6g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlWpXIgu4uBzEzuyGD3kAtIO9YVYS_Q64"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "486653846215-gsb70vptumotei196g4st6d492bbup6g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

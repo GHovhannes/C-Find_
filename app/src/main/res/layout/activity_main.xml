@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".activities.MainActivity">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:fontFamily="@font/grand_hotel"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
+        android:text="@string/app_name"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@id/likesImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/likesImage"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_heart"
+        app:layout_constraintEnd_toStartOf="@id/imageSignOut"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="5dp"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="4dp"
+        android:contentDescription="@string/app_name" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageSignOut"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/background_icon"
+        android:padding="@dimen/_6sdp"
+        android:src="@drawable/ic_exit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintTop_toBottomOf="@id/likesImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/usersRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            android:padding="26dp"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <ProgressBar
+            android:id="@id/progressBar"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center"/>
+
+        <TextView
+            android:id="@+id/textErrorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="31dp"
+            android:layout_marginEnd="31dp"
+            android:gravity="center"
+            android:textColor="@color/error"
+            android:textSize="15sp"
+            android:visibility="gone"/>
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/homeImage"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_home"
+            android:padding="@dimen/_10sdp"
+            android:contentDescription="@string/app_name" />
+
+        <ImageView
+            android:id="@+id/searchImage"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_search"
+            android:padding="@dimen/_10sdp"
+            android:contentDescription="@string/app_name" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/accountImage"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_account"
+            android:paddingTop="10dp"
+            app:riv_oval="true"
+            android:paddingBottom="10dp"
+            app:riv_corner_radius="10dp"
+            android:contentDescription="@string/app_name" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
