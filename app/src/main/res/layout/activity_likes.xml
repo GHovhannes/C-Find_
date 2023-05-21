@@ -4,8 +4,112 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:animateLayoutChanges="true"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".activities.LikesActivity">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/grand_hotel"
+        android:paddingStart="20dp"
+        android:paddingEnd="10dp"
+        android:text="@string/who_liked_me"
+        android:textColor="@color/black"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/back_to_main"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/back_to_main"
+        android:layout_width="84dp"
+        android:layout_height="41dp"
+        android:layout_marginTop="16dp"
+        android:padding="@dimen/_5sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="?attr/actionModeCloseDrawable" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/back_to_main">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/usersRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            android:padding="26dp"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <ProgressBar
+            android:id="@id/progressBar"
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/textErrorMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="31dp"
+            android:layout_marginEnd="31dp"
+            android:gravity="center"
+            android:textColor="@color/error"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/buttonPanel"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:id="@+id/homeImage"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_home"
+            android:padding="@dimen/_10sdp"
+            android:contentDescription="@string/app_name" />
+
+        <ImageView
+            android:id="@+id/searchImage"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_search"
+            android:padding="@dimen/_10sdp"
+            android:contentDescription="@string/app_name" />
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/accountImage"
+            android:layout_width="@dimen/_105sdp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_account"
+            android:paddingTop="10dp"
+            app:riv_oval="true"
+            android:paddingBottom="10dp"
+            app:riv_corner_radius="10dp"
+            android:contentDescription="@string/app_name" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

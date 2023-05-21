@@ -44,6 +44,7 @@ public class AccountActivity extends BaseActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 activityAccountBinding.seekbarText.setVisibility(View.VISIBLE);
                 activityAccountBinding.seekbarText.setText("Distance from you " + progress + " metres");
+                preferenceManager.putString("Distance", String.valueOf(progress));
             }
 
             @Override

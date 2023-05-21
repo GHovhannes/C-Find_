@@ -109,6 +109,8 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 
         activityMainBinding.accountImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AccountActivity.class)));
 
+        activityMainBinding.likesImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), LikesActivity.class)));
+
     }
 
     private void loadUserDetails() {
@@ -442,9 +444,8 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
     }
 
     public void getter(){
-        Intent intent = getIntent();
-        double lat = Double.parseDouble(intent.getStringExtra(KEY_LATITUDE));
-        double lng = Double.parseDouble(intent.getStringExtra(KEY_LONGITUDE));
+        double lat = Double.parseDouble(preferenceManager.getString(KEY_LATITUDE));
+        double lng = Double.parseDouble(preferenceManager.getString(KEY_LONGITUDE));
 
         getUsers(lat,lng);
 
@@ -463,7 +464,7 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 
         double distance = earthRadius * c * 1000;
 
-        return distance <= 100;
+        return distance <= Double.parseDouble(preferenceManager.getString("Distance"));
     }
 
 }

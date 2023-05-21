@@ -538,13 +538,13 @@ public class SignUpActivity extends AppCompatActivity {
                                                     preferenceManager.putString(KEY_USER_ID, documentReference.getId());
                                                     preferenceManager.putString(KEY_USER_NAME, activitySignUpBinding.inputUserName.getText().toString().trim());
                                                     preferenceManager.putString(KEY_IMAGE, encodedImage);
+                                                    preferenceManager.putString(KEY_LATITUDE,String.valueOf(lat));
+                                                    preferenceManager.putString(KEY_LONGITUDE,String.valueOf(lng));
 
                                                     showToast("Sign up is successful\n" +
                                                             "Verify your account");
 
                                                     Intent intent = new Intent(getApplicationContext(), SignInActivity.class);
-                                                    intent.putExtra(KEY_LATITUDE,lat);
-                                                    intent.putExtra(KEY_LONGITUDE,lng);
                                                     startActivity(intent);
                                                     finish();
 
