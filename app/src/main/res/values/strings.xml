@@ -40,4 +40,6 @@
     <string name="choose_distance">Choose distance</string>
     <string name="am_i_active_for_search">Am I active for search ?</string>
     <string name="who_liked_me">Who liked me</string>
+    <string name="permission_denied">Permission Denied</string>
+    <string name="permission_denied_permanently">Permission Denied Permanently</string>
 </resources>

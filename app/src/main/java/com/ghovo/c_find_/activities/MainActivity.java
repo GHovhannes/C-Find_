@@ -6,6 +6,7 @@ import static com.ghovo.c_find_.utilities.Constants.KEY_ACTIVITY_FOR_SEARCH;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_HISTORY;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_REQUEST;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_USERS;
+import static com.ghovo.c_find_.utilities.Constants.KEY_DISTANCE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_EMAIL;
 import static com.ghovo.c_find_.utilities.Constants.KEY_FCM_TOKEN;
 import static com.ghovo.c_find_.utilities.Constants.KEY_IMAGE;
@@ -75,6 +76,9 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 
     private Boolean isLiked;
     private User receiverUser;
+    private int distance;
+    private double latitudeCurrent;
+    private double longitudeCurrent;
     private FirebaseUser firebaseUser;
     private FirebaseFirestore firebaseFirestore;
     private PreferenceManager preferenceManager;
@@ -96,7 +100,7 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         loadUserDetails();
         getToken();
 
-        getter();
+        getUsers();
 
         setListeners();
     }
@@ -170,7 +174,7 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 
     };
 
-    private void getUsers(double lat,double lng) {
+    private void getUsers() {
         loading(true);
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
@@ -189,12 +193,18 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 
                             if (currentUserId.equals(queryDocumentSnapshot.getId())) {
 
+                                latitudeCurrent = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LATITUDE)));
+                                longitudeCurrent = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LONGITUDE)));
+                                distance = Integer.parseInt(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_DISTANCE)));
+
                                 continue;
 
                             }
-                            double lat1 = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LATITUDE)));
-                            double lng1 = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LONGITUDE)));
-                            if (ifDistanceIsOk(lat1, lng1, lat, lng)) {
+
+                            double latitudeInput = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LATITUDE)));
+                            double longitudeInput = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LONGITUDE)));
+
+                            if (ifDistanceIsOk(latitudeInput, longitudeInput)) {
                                 User user = new User();
                                 user.userName = queryDocumentSnapshot.getString(KEY_USER_NAME);
                                 user.email = queryDocumentSnapshot.getString(KEY_EMAIL);
@@ -203,6 +213,13 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
                                 user.id = queryDocumentSnapshot.getId();
                                 userList.add(user);
                             }
+
+                            Log.d("HELLO", "ISDistanceOk: " + ifDistanceIsOk(latitudeInput, longitudeInput));
+                            Log.d("HELLO", "LAT: " + String.valueOf(latitudeCurrent));
+                            Log.d("HELLO", "LNG: " + String.valueOf(longitudeCurrent));
+                            Log.d("HELLO", "LAT1: " + String.valueOf(latitudeInput));
+                            Log.d("HELLO", "LNG1: " + String.valueOf(longitudeInput));
+
                         }
 
                             if (userList.size() > 0) {
@@ -443,28 +460,23 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 
     }
 
-    public void getter(){
-        double lat = Double.parseDouble(preferenceManager.getString(KEY_LATITUDE));
-        double lng = Double.parseDouble(preferenceManager.getString(KEY_LONGITUDE));
-
-        getUsers(lat,lng);
-
-    }
-    private boolean ifDistanceIsOk(double latitude1, double longitude1, double latitude2, double longitude2) {
+    private boolean ifDistanceIsOk(double latitudeInput, double longitudeInput) {
         int earthRadius = 6371;
 
-        double latDistance = Math.toRadians(latitude2 - latitude1);
-        double lonDistance = Math.toRadians(longitude2 - longitude1);
+        double latDistance = Math.toRadians(latitudeCurrent - latitudeInput);
+        double lonDistance = Math.toRadians(longitudeCurrent - longitudeInput);
 
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(latitude1)) * Math.cos(Math.toRadians(latitude2))
+                + Math.cos(Math.toRadians(latitudeInput)) * Math.cos(Math.toRadians(latitudeCurrent))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
         double distance = earthRadius * c * 1000;
 
-        return distance <= Double.parseDouble(preferenceManager.getString("Distance"));
+        Log.d("HELLO", "DISTANCE: " + distance);
+
+        return distance <= this.distance;
     }
 
 }

@@ -6,6 +6,7 @@ import static com.ghovo.c_find_.utilities.Constants.IMAGE_HEIGHT;
 import static com.ghovo.c_find_.utilities.Constants.IMAGE_WIDTH;
 import static com.ghovo.c_find_.utilities.Constants.KEY_ACTIVITY_FOR_SEARCH;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_USERS;
+import static com.ghovo.c_find_.utilities.Constants.KEY_DISTANCE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_EMAIL;
 import static com.ghovo.c_find_.utilities.Constants.KEY_IMAGE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_LATITUDE;
@@ -58,9 +59,12 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    private double latitude;
+    private double longitude;
     private String encodedImage;
     private FirebaseAuth firebaseAuth;
     private PreferenceManager preferenceManager;
@@ -121,6 +125,7 @@ public class SignUpActivity extends AppCompatActivity {
             if (isValidSignUpDetails()) {
 
                 getCurrentLocation();
+                signUp();
 
             }
         });
@@ -492,7 +497,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    private void signUp(double lat, double lng) {
+    private void signUp() {
 
         loading(true);
 
@@ -503,20 +508,21 @@ public class SignUpActivity extends AppCompatActivity {
                 .get()
                 .addOnCompleteListener(v -> {
 
-                    boolean flag = true;
+                    AtomicBoolean flag = new AtomicBoolean(true);
 
                     for (QueryDocumentSnapshot queryDocumentSnapshot: v.getResult()) {
 
                         if (activitySignUpBinding.inputUserName.getText().toString().trim()
                                 .equals(queryDocumentSnapshot.getString(KEY_USER_NAME))) {
 
-                            flag = false;
+                            flag.set(false);
+                            break;
 
                         }
 
                     }
 
-                    if (flag) {
+                    if (flag.get()) {
 
                         firebaseAuth.createUserWithEmailAndPassword(activitySignUpBinding.inputEmail.getText().toString(),
                                         activitySignUpBinding.inputPassword.getText().toString())
@@ -528,9 +534,10 @@ public class SignUpActivity extends AppCompatActivity {
                                         userData.put(KEY_USER_NAME, activitySignUpBinding.inputUserName.getText().toString().trim());
                                         userData.put(KEY_EMAIL, activitySignUpBinding.inputEmail.getText().toString());
                                         userData.put(KEY_IMAGE, encodedImage);
-                                        userData.put(KEY_LATITUDE,String.valueOf(lat));
-                                        userData.put(KEY_LONGITUDE,String.valueOf(lng));
+                                        userData.put(KEY_LATITUDE, String.valueOf(latitude));
+                                        userData.put(KEY_LONGITUDE, String.valueOf(longitude));
                                         userData.put(KEY_ACTIVITY_FOR_SEARCH,false);
+                                        userData.put(KEY_DISTANCE, 1000);
 
                                         firebaseFirestore.collection(KEY_COLLECTION_USERS)
                                                 .add(userData)
@@ -538,8 +545,6 @@ public class SignUpActivity extends AppCompatActivity {
                                                     preferenceManager.putString(KEY_USER_ID, documentReference.getId());
                                                     preferenceManager.putString(KEY_USER_NAME, activitySignUpBinding.inputUserName.getText().toString().trim());
                                                     preferenceManager.putString(KEY_IMAGE, encodedImage);
-                                                    preferenceManager.putString(KEY_LATITUDE,String.valueOf(lat));
-                                                    preferenceManager.putString(KEY_LONGITUDE,String.valueOf(lng));
 
                                                     showToast("Sign up is successful\n" +
                                                             "Verify your account");
@@ -615,9 +620,8 @@ public class SignUpActivity extends AppCompatActivity {
                     Location location = locationResult.getLastLocation();
                     if (location != null) {
                         // Location retrieved successfully
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        signUp(latitude,longitude);
+                        latitude = location.getLatitude();
+                        longitude = location.getLongitude();
 
                     } else {
                         Toast.makeText(SignUpActivity.this, "Fail. Try to turn on location access in settings.", Toast.LENGTH_SHORT).show();

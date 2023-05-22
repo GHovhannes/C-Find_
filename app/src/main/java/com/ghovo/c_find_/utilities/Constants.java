@@ -16,6 +16,7 @@ public class Constants {
     public static final String REMOTE_MSG_DATA = "data";
     public static final String KEY_IS_LIKED = "isLiked";
     public static final String KEY_PASSWORD = "password";
+    public static final String KEY_DISTANCE = "distance";
     public static final String KEY_FCM_TOKEN = "fcmToken";
     public static final String KEY_USER_NAME = "username";
     public static final String KEY_SENDER_ID = "senderId";
