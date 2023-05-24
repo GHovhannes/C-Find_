@@ -1,7 +1,6 @@
 package com.ghovo.c_find_.activities;
 
 
-
 import static com.ghovo.c_find_.utilities.Constants.IMAGE_HEIGHT;
 import static com.ghovo.c_find_.utilities.Constants.IMAGE_WIDTH;
 import static com.ghovo.c_find_.utilities.Constants.KEY_ACTIVITY_FOR_SEARCH;
@@ -15,17 +14,21 @@ import static com.ghovo.c_find_.utilities.Constants.KEY_USER_ID;
 import static com.ghovo.c_find_.utilities.Constants.KEY_USER_NAME;
 
 import android.Manifest;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
@@ -38,6 +41,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.ghovo.c_find_.R;
 import com.ghovo.c_find_.databinding.ActivitySignUpBinding;
@@ -174,7 +178,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     activitySignUpBinding.textUserName.setText("");
 
-                }   else {
+                } else {
 
                     activitySignUpBinding.inputUserName.setBackground(AppCompatResources.getDrawable(
                             getApplicationContext(), R.drawable.background_incorrect_input
@@ -510,7 +514,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                     AtomicBoolean flag = new AtomicBoolean(true);
 
-                    for (QueryDocumentSnapshot queryDocumentSnapshot: v.getResult()) {
+                    for (QueryDocumentSnapshot queryDocumentSnapshot : v.getResult()) {
 
                         if (activitySignUpBinding.inputUserName.getText().toString().trim()
                                 .equals(queryDocumentSnapshot.getString(KEY_USER_NAME))) {
@@ -536,7 +540,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         userData.put(KEY_IMAGE, encodedImage);
                                         userData.put(KEY_LATITUDE, String.valueOf(latitude));
                                         userData.put(KEY_LONGITUDE, String.valueOf(longitude));
-                                        userData.put(KEY_ACTIVITY_FOR_SEARCH,false);
+                                        userData.put(KEY_ACTIVITY_FOR_SEARCH, false);
                                         userData.put(KEY_DISTANCE, 1000);
 
                                         firebaseFirestore.collection(KEY_COLLECTION_USERS)
@@ -588,9 +592,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                                 });
 
-                    }
-
-                    else {
+                    } else {
 
                         inputErrorVisualisation(1);
                         showToast("This username is already used");
@@ -599,51 +601,59 @@ public class SignUpActivity extends AppCompatActivity {
                     }
                 });
     }
-    private boolean checkLocationPermission() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_CODE);
+
+    private boolean checkLocationPermission(Context context) {
+        try {
+            // Check if the permission has been granted
+            int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
+            if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                // Request the permission if it hasn't been granted
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                return false;
+            }
+        } catch (Exception e) {
+            // Log the error
+            System.out.println("Error: " + e.getMessage());
             return false;
         }
-        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Permission granted, get user's location
+                getCurrentLocation();
+            } else {
+                // Permission denied, show error message
+                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void getCurrentLocation() {
-        if (checkLocationPermission()) {
-            LocationRequest locationRequest = LocationRequest.create()
-                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                    .setInterval(LOCATION_UPDATE_INTERVAL);
-
-            fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
-                @Override
-                public void onLocationResult(@NonNull LocationResult locationResult) {
-                    Location location = locationResult.getLastLocation();
-                    if (location != null) {
-                        // Location retrieved successfully
-                        latitude = location.getLatitude();
-                        longitude = location.getLongitude();
-
-                    } else {
-                        Toast.makeText(SignUpActivity.this, "Fail. Try to turn on location access in settings.", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }, null);
-        }
-    }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        // Check if the permission request was granted
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getCurrentLocation();
-            } else {
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
+        // Get user's location using LocationManager
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                return;
             }
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null) {
+                latitude = location.getLatitude();
+                longitude = location.getLongitude();
+                Log.d("Location", "Latitude: " + latitude + ", Longitude: " + longitude);
+            } else {
+                // Location data not available
+                Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            // Location manager not available
+            Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
         }
     }
 
