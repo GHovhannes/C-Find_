@@ -602,24 +602,6 @@ public class SignUpActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean checkLocationPermission(Context context) {
-        try {
-            // Check if the permission has been granted
-            int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
-            if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-                return true;
-            } else {
-                // Request the permission if it hasn't been granted
-                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                return false;
-            }
-        } catch (Exception e) {
-            // Log the error
-            System.out.println("Error: " + e.getMessage());
-            return false;
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
