@@ -6,6 +6,7 @@ public class Constants {
 
     public static final int IMAGE_WIDTH = 1920;
     public static final int IMAGE_HEIGHT = 1080;
+    public static final String  KEY_PHONE_NUMBER = "phone";
     public static final String KEY_USER = "user";
     public static final String KEY_COUNT = "count";
     public static final String KEY_IMAGE = "image";
@@ -68,6 +69,5 @@ public class Constants {
 
     public static final String KEY_LATITUDE = "latitude";
     public static final String KEY_LONGITUDE = "longitude";
-
     public static final String KEY_ACTIVITY_FOR_SEARCH = "is active";
 }

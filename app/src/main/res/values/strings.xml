@@ -42,4 +42,5 @@
     <string name="who_liked_me">Who liked me</string>
     <string name="permission_denied">Permission Denied</string>
     <string name="permission_denied_permanently">Permission Denied Permanently</string>
+    <string name="save_changes">Save changes</string>
 </resources>

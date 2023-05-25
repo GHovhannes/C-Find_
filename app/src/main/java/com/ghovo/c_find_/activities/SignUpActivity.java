@@ -538,10 +538,8 @@ public class SignUpActivity extends AppCompatActivity {
                                         userData.put(KEY_USER_NAME, activitySignUpBinding.inputUserName.getText().toString().trim());
                                         userData.put(KEY_EMAIL, activitySignUpBinding.inputEmail.getText().toString());
                                         userData.put(KEY_IMAGE, encodedImage);
-                                        userData.put(KEY_LATITUDE, String.valueOf(latitude));
-                                        userData.put(KEY_LONGITUDE, String.valueOf(longitude));
                                         userData.put(KEY_ACTIVITY_FOR_SEARCH, false);
-                                        userData.put(KEY_DISTANCE, 1000);
+                                        userData.put(KEY_DISTANCE, "1000");
 
                                         firebaseFirestore.collection(KEY_COLLECTION_USERS)
                                                 .add(userData)
@@ -597,7 +595,6 @@ public class SignUpActivity extends AppCompatActivity {
                         inputErrorVisualisation(1);
                         showToast("This username is already used");
                         loading(false);
-
                     }
                 });
     }
@@ -628,7 +625,6 @@ public class SignUpActivity extends AppCompatActivity {
             if (location != null) {
                 latitude = location.getLatitude();
                 longitude = location.getLongitude();
-                Log.d("Location", "Latitude: " + latitude + ", Longitude: " + longitude);
             } else {
                 // Location data not available
                 Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
@@ -638,5 +634,4 @@ public class SignUpActivity extends AppCompatActivity {
             Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
         }
     }
-
 }

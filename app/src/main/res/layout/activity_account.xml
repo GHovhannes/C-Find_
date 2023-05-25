@@ -25,10 +25,10 @@
             android:textColor="@color/black"/>
         <SeekBar
             android:id="@+id/distance"
-            android:layout_width="@dimen/_250sdp"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/_35sdp"
             android:min="1"
-            android:max="1000"
+            android:max="10000"
             android:progress="1"/>
         <TextView
             android:layout_width="wrap_content"
@@ -41,6 +41,19 @@
             android:layout_height="@dimen/_35sdp"
             android:id="@+id/active_or_not"
             android:text="@string/am_i_active_for_search"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_width="@dimen/_200sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:id="@+id/save_changes"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:cornerRadius="20dp"
+            android:layout_gravity="center"
+            android:text="@string/save_changes"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

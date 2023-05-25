@@ -75,6 +75,8 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
         getUsers();
     }
     private void setListeners() {
+        activityLikesBinding.backToMain.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), MainActivity.class)));
+
         activityLikesBinding.homeImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), MainActivity.class)));
 
         activityLikesBinding.searchImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), HistoryActivity.class)));
