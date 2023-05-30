@@ -143,6 +143,8 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
                                 User user = new User();
                                 user.userName = queryDocumentSnapshot.getString(KEY_SENDER_USER_NAME);
                                 user.image = queryDocumentSnapshot.getString(KEY_SENDER_IMAGE);
+                                user.email = queryDocumentSnapshot.getString(KEY_SENDER_EMAIL);
+                                user.id = queryDocumentSnapshot.getId();
                                 userList.add(user);
 
                         }

@@ -51,6 +51,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
@@ -113,7 +114,6 @@ public class SignUpActivity extends AppCompatActivity {
 
         preferenceManager = new PreferenceManager(getApplicationContext());
         activitySignUpBinding = ActivitySignUpBinding.inflate(getLayoutInflater());
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         changeStatusBarColor();
 
         setContentView(activitySignUpBinding.getRoot());
@@ -121,14 +121,13 @@ public class SignUpActivity extends AppCompatActivity {
         setListeners();
     }
 
+
     private void setListeners() {
 
         activitySignUpBinding.textSignIn.setOnClickListener(v -> onBackPressed());
 
         activitySignUpBinding.buttonSignUp.setOnClickListener(v -> {
             if (isValidSignUpDetails()) {
-
-                getCurrentLocation();
                 signUp();
 
             }
@@ -535,10 +534,12 @@ public class SignUpActivity extends AppCompatActivity {
 
                                         HashMap<String, Object> userData = new HashMap<>();
 
-                                        userData.put(KEY_USER_NAME, activitySignUpBinding.inputUserName.getText().toString().trim());
+                                        userData.put(KEY_USER_NAME, activitySignUpBinding.inputUserName.getText().toString().trim().toLowerCase());
                                         userData.put(KEY_EMAIL, activitySignUpBinding.inputEmail.getText().toString());
                                         userData.put(KEY_IMAGE, encodedImage);
-                                        userData.put(KEY_ACTIVITY_FOR_SEARCH, false);
+                                        userData.put(KEY_ACTIVITY_FOR_SEARCH, true);
+                                        userData.put(KEY_LATITUDE, 0.0);
+                                        userData.put(KEY_LONGITUDE, 0.0);
                                         userData.put(KEY_DISTANCE, "1000");
 
                                         firebaseFirestore.collection(KEY_COLLECTION_USERS)
@@ -597,41 +598,5 @@ public class SignUpActivity extends AppCompatActivity {
                         loading(false);
                     }
                 });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, get user's location
-                getCurrentLocation();
-            } else {
-                // Permission denied, show error message
-                Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void getCurrentLocation() {
-        // Get user's location using LocationManager
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager != null) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (location != null) {
-                latitude = location.getLatitude();
-                longitude = location.getLongitude();
-            } else {
-                // Location data not available
-                Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            // Location manager not available
-            Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
-        }
     }
 }

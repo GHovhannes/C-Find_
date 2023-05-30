@@ -9,7 +9,7 @@
     tools:context=".activities.HistoryActivity">
 
     <SearchView
-        android:id="@+id/searchView"
+        android:id="@+id/search_view"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_margin="8dp"
@@ -21,14 +21,17 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
     <FrameLayout
+        android:id="@+id/fm_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
         android:background="@color/white"
         app:layout_constraintBottom_toTopOf="@id/buttonPanel"
-        app:layout_constraintTop_toBottomOf="@id/searchView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/search_view"
+        app:layout_constraintVertical_bias="0.0">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/usersRecyclerView"
@@ -38,14 +41,13 @@
             android:orientation="vertical"
             android:overScrollMode="never"
             android:padding="26dp"
-            android:visibility="gone"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <ProgressBar
             android:id="@id/progressBar"
             android:layout_width="33dp"
             android:layout_height="33dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <TextView
             android:id="@+id/textErrorMessage"
@@ -56,10 +58,52 @@
             android:gravity="center"
             android:textColor="@color/error"
             android:textSize="15sp"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
     </FrameLayout>
 
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@id/buttonPanel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/fm_layout"
+        app:layout_constraintVertical_bias="0.0">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/searchRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            android:padding="26dp"
+            android:visibility="gone"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <ProgressBar
+            android:id="@+id/search_progress"
+            android:layout_width="@dimen/_33sdp"
+            android:layout_height="@dimen/_33sdp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/textErrorMessageForSearch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="31dp"
+            android:layout_marginEnd="31dp"
+            android:gravity="center"
+            android:textColor="@color/error"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+    </FrameLayout>
     <LinearLayout
         android:id="@+id/buttonPanel"
         android:layout_width="match_parent"

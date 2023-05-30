@@ -9,6 +9,8 @@ public class Constants {
     public static final String  KEY_PHONE_NUMBER = "phone";
     public static final String KEY_USER = "user";
     public static final String KEY_COUNT = "count";
+    public static final String KEY_SEARCH = "count";
+
     public static final String KEY_IMAGE = "image";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_USER_ID = "userId";

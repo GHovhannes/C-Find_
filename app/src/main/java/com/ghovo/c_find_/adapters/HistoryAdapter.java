@@ -50,8 +50,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             itemContainerUserBinding.textEmail.setText(user.email);
 
             itemContainerUserBinding.imageProfile.setImageBitmap(
-                    getResizedBitmap(getUserImage(user.image)
-                    ));
+                    getResizedBitmap(getUserImage(user.image)));
 
         }
     }

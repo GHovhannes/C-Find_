@@ -2,6 +2,7 @@ package com.ghovo.c_find_.activities;
 
 
 
+import static androidx.core.location.LocationManagerCompat.requestLocationUpdates;
 import static com.ghovo.c_find_.utilities.Constants.KEY_ACTIVITY_FOR_SEARCH;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_HISTORY;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_REQUEST;
@@ -25,14 +26,17 @@ import static com.ghovo.c_find_.utilities.Constants.KEY_USER_ID;
 import static com.ghovo.c_find_.utilities.Constants.KEY_USER_NAME;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -42,6 +46,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 
 import com.ghovo.c_find_.R;
@@ -58,6 +63,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -75,14 +81,16 @@ import java.util.Objects;
 public class MainActivity extends BaseActivity implements UserListener, DialogListener {
 
     private Boolean isLiked;
+    private double latitude;
+    private double longitude;
+    private FusedLocationProviderClient fusedLocationClient;
     private User receiverUser;
-//    private int distance;
-//    private double latitudeCurrent;
-//    private double longitudeCurrent;
     private FirebaseUser firebaseUser;
     private FirebaseFirestore firebaseFirestore;
     private PreferenceManager preferenceManager;
     private ActivityMainBinding activityMainBinding;
+    private LocationCallback locationCallback;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
 
     @Override
@@ -94,6 +102,21 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         preferenceManager = new PreferenceManager(getApplicationContext());
         activityMainBinding = ActivityMainBinding.inflate(getLayoutInflater());
         changeStatusBarColor();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult != null) {
+                    Location location = locationResult.getLastLocation();
+                    assert location != null;
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+                    updateDatabase();
+                }
+            }
+        };
+
+        checkLocationPermission();
 
         setContentView(activityMainBinding.getRoot());
 
@@ -103,7 +126,36 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         getUsers();
 
         setListeners();
+
     }
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            requestLocationUpdates();
+        }
+    }
+    private void requestLocationUpdates() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(5000);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
+
 
     private void setListeners() {
 
@@ -191,20 +243,11 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 
                         for (QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()) {
 
-//                            if (currentUserId.equals(queryDocumentSnapshot.getId())) {
-//
-//                                latitudeCurrent = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LATITUDE)));
-//                                longitudeCurrent = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LONGITUDE)));
-//                                distance = Integer.parseInt(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_DISTANCE)));
-//
-//                                continue;
-//
-//                            }
 
 //                            double latitudeInput = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LATITUDE)));
 //                            double longitudeInput = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LONGITUDE)));
 
-                            if (true) {
+                            if (!currentUserId.equals(queryDocumentSnapshot.getId())) {
                                 User user = new User();
                                 user.userName = queryDocumentSnapshot.getString(KEY_USER_NAME);
                                 user.email = queryDocumentSnapshot.getString(KEY_EMAIL);
@@ -459,6 +502,45 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         }
 
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                requestLocationUpdates();
+            } else {
+                // Permission denied, handle accordingly
+            }
+        }
+    }
+
+//    private void getCurrentLocation() {
+//        // Get user's location using LocationManager
+//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        if (locationManager != null) {
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                return;
+//            }
+//            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//            if (location != null) {
+//                latitude = location.getLatitude();
+//                longitude = location.getLongitude();
+//            } else {
+//                // Location data not available
+//                Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            // Location manager not available
+//            Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+    private void updateDatabase(){
+        DocumentReference documentReferenceStatus = firebaseFirestore.collection(KEY_COLLECTION_USERS)
+                .document(preferenceManager.getString(KEY_USER_ID));
+        documentReferenceStatus.update(KEY_LATITUDE,latitude);
+        documentReferenceStatus.update(KEY_LONGITUDE,longitude);
+    }
 
 //    private boolean ifDistanceIsOk(double latitudeInput, double longitudeInput) {
 //        int earthRadius = 6371;
@@ -479,4 +561,14 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 //        return distance <= this.distance;
 //    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        stopLocationUpdates();
+    }
+
+    private void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+    }
 }
