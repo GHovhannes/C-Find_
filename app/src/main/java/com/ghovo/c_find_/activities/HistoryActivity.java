@@ -234,7 +234,7 @@ public class HistoryActivity extends BaseActivity {
                 fb.collection(KEY_COLLECTION_USERS).whereEqualTo(KEY_USER_NAME,listItem.get(i))
                         .get()
                         .addOnCompleteListener(task -> {
-
+                            Log.d("Hello", "Error");
                             loading(false);
                             ArrayList<User> searchResult = new ArrayList<>();
 
@@ -251,29 +251,21 @@ public class HistoryActivity extends BaseActivity {
                                 if (searchResult.size() > 0) {
 
                                     HistoryAdapter historyAdapter= new HistoryAdapter(searchResult);
-                                    activityHistoryBinding.searchRecyclerView.setAdapter(historyAdapter);
-                                    activityHistoryBinding.searchRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-                                    activityHistoryBinding.searchRecyclerView.setVisibility(View.VISIBLE);
-                                    activityHistoryBinding.textErrorMessageForSearch.setVisibility(View.GONE);
-                                    activityHistoryBinding.usersRecyclerView.setVisibility(View.GONE);
+                                    activityHistoryBinding.usersRecyclerView.setAdapter(historyAdapter);
+                                    activityHistoryBinding.textErrorMessage.setVisibility(View.GONE);
 
                                 } else {
-
+                                    Log.d("Hello", "Error 1");
                                     showErrorMessage();
 
                                 }
 
                             } else {
-
+                                Log.d("Hello", "Error 2");
                                 showErrorMessage();
 
                             }
                         });
-            }
-            else {
-                showErrorMessage();
-                loading(false);
             }
         }
     }
