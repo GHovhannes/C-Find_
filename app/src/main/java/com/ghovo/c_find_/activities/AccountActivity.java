@@ -1,6 +1,8 @@
 package com.ghovo.c_find_.activities;
 
 import static android.content.ContentValues.TAG;
+import static com.ghovo.c_find_.utilities.Constants.IMAGE_HEIGHT;
+import static com.ghovo.c_find_.utilities.Constants.IMAGE_WIDTH;
 import static com.ghovo.c_find_.utilities.Constants.KEY_ACTIVITY_FOR_SEARCH;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_HISTORY;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_USERS;
@@ -13,7 +15,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -24,11 +28,18 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.ghovo.c_find_.R;
 import com.ghovo.c_find_.databinding.ActivityAccountBinding;
 import com.ghovo.c_find_.utilities.PreferenceManager;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class AccountActivity extends BaseActivity {
     private ActivityAccountBinding activityAccountBinding;
@@ -36,6 +47,35 @@ public class AccountActivity extends BaseActivity {
     private FirebaseFirestore firebaseFirestore;
     private int progress;
     private boolean flagIsChecked;
+    private String encodedImage;
+
+
+    private final ActivityResultLauncher<Intent> pickImage = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_OK) {
+
+                    if (result.getData() != null) {
+
+                        Uri imageUri = result.getData().getData();
+
+                        try {
+
+                            InputStream inputStream = getContentResolver().openInputStream(imageUri);
+                            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+                            activityAccountBinding.profileImage.setImageBitmap(bitmap);
+                            encodedImage = encodedImage(bitmap);
+
+                        } catch (FileNotFoundException e) {
+
+                            e.printStackTrace();
+
+                        }
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +105,16 @@ public class AccountActivity extends BaseActivity {
 
             }
         });
+        activityAccountBinding.profileImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                pickImage.launch(intent);
+                activityAccountBinding.saveChanges.setVisibility(View.VISIBLE);
+            }
+        });
+
         activityAccountBinding.activeOrNot.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -79,8 +129,8 @@ public class AccountActivity extends BaseActivity {
                         .document(preferenceManager.getString(KEY_USER_ID));
                 documentReferenceStatus.update(KEY_ACTIVITY_FOR_SEARCH, flagIsChecked);
                 documentReferenceStatus.update(KEY_DISTANCE, String.valueOf(progress));
-                Log.d("barber", "is checked: " + flagIsChecked);
-                Log.d("barber", "distance: " + progress);
+                documentReferenceStatus.update(KEY_IMAGE,encodedImage);
+                preferenceManager.putString(KEY_IMAGE,encodedImage);
                 activityAccountBinding.saveChanges.setVisibility(View.GONE);
                 Toast.makeText(AccountActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
             }
@@ -131,5 +181,15 @@ public class AccountActivity extends BaseActivity {
         bitmap.recycle();
 
         return resizedBitmap;
+    }
+    private String encodedImage(Bitmap bitmap) {
+
+        Bitmap previewBitmap = Bitmap.createScaledBitmap(bitmap, IMAGE_WIDTH, IMAGE_HEIGHT, false);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        previewBitmap.compress(Bitmap.CompressFormat.WEBP, 95, byteArrayOutputStream);
+
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        return Base64.encodeToString(bytes, Base64.DEFAULT);
+
     }
 }

@@ -51,7 +51,9 @@ public class HistoryActivity extends BaseActivity {
     private PreferenceManager preferenceManager;
 
     private ActivityHistoryBinding activityHistoryBinding;
-    ArrayList<String> listItem = new ArrayList<>();
+    ArrayList<User> listItem = new ArrayList<>();
+
+    ArrayList<User> filteredUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,8 +100,14 @@ public class HistoryActivity extends BaseActivity {
         fb.collection(KEY_COLLECTION_USERS).get().addOnCompleteListener(task -> {
             if(task.getResult()!=null && task.isSuccessful()){
                 for(QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()){
-                    listItem.add(queryDocumentSnapshot.getString(KEY_USER_NAME));
-                    Log.d("Hello", "getUserNames: " + listItem);
+
+                        User user = new User();
+                        user.userName = queryDocumentSnapshot.getString(KEY_USER_NAME);
+                        user.email = queryDocumentSnapshot.getString(KEY_EMAIL);
+                        user.image = queryDocumentSnapshot.getString(KEY_IMAGE);
+                        user.isLiked = String.valueOf(queryDocumentSnapshot.get(KEY_IS_LIKED));
+                        listItem.add(user);
+
                 }
             }
         });
@@ -219,128 +227,39 @@ public class HistoryActivity extends BaseActivity {
         return BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
     }
-    private void showToast(String message) {
+    private void showFiltered() {
+        if (filteredUsers.size() > 0) {
 
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            HistoryAdapter historyAdapter= new HistoryAdapter(filteredUsers);
+            activityHistoryBinding.usersRecyclerView.setAdapter(historyAdapter);
 
+            activityHistoryBinding.usersRecyclerView.setVisibility(View.VISIBLE);
+
+        } else {
+
+            showErrorMessage();
+
+        }
     }
 
+
+
     public void getSearchResult(String text){
-        loading(true);
-        for (int i = 0;i<listItem.size();i++){
-            if(listItem.get(i).toLowerCase().contains(text.toLowerCase())){
-                Log.d("Hello", "getSearchResult: " + listItem.get(i));
-                FirebaseFirestore fb = FirebaseFirestore.getInstance();
-                fb.collection(KEY_COLLECTION_USERS).whereEqualTo(KEY_USER_NAME,listItem.get(i))
-                        .get()
-                        .addOnCompleteListener(task -> {
-                            Log.d("Hello", "Error");
-                            loading(false);
-                            ArrayList<User> searchResult = new ArrayList<>();
-
-                            if (task.isSuccessful() && task.getResult() != null) {
-
-                                for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
-                                    User users = new User();
-                                    users.userName = queryDocumentSnapshot.getString(KEY_USER_NAME);
-                                    users.email = queryDocumentSnapshot.getString(KEY_EMAIL);
-                                    users.image = queryDocumentSnapshot.getString(KEY_IMAGE);
-                                    users.isLiked = String.valueOf(queryDocumentSnapshot.get(KEY_IS_LIKED));
-                                    searchResult.add(users);
-                                }
-                                if (searchResult.size() > 0) {
-
-                                    HistoryAdapter historyAdapter= new HistoryAdapter(searchResult);
-                                    activityHistoryBinding.usersRecyclerView.setAdapter(historyAdapter);
-                                    activityHistoryBinding.textErrorMessage.setVisibility(View.GONE);
-
-                                } else {
-                                    Log.d("Hello", "Error 1");
-                                    showErrorMessage();
-
-                                }
-
-                            } else {
-                                Log.d("Hello", "Error 2");
-                                showErrorMessage();
-
-                            }
-                        });
+        if (text.equals("")){
+            getUserHistory();
+        }
+        else {
+            loading(true);
+            filteredUsers = new ArrayList<>();
+            for (int i = 0; i < listItem.size(); i++) {
+                if (listItem.get(i).getUserName().toLowerCase().contains(text.toLowerCase())) {
+                    if (!filteredUsers.contains(listItem.get(i))) {
+                        filteredUsers.add(listItem.get(i));
+                    }
+                }
             }
+            loading(false);
+            showFiltered();
         }
     }
 }
-//
-//    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-//        firebaseFirestore.collection(KEY_COLLECTION_USERS)
-//                .get()
-//                .addOnCompleteListener(task -> {
-//
-//                loading(false);
-//
-//                if (task.isSuccessful() && task.getResult() != null) {
-//
-//                for (QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()) {
-//                User user = new User();
-//                user.userName = queryDocumentSnapshot.getString(KEY_USER_NAME);
-//                listItem.add(user);
-//                }
-//                for (int i = 0;i<listItem.size();i++) {
-//        if(listItem.get(i).getUserName().toLowerCase().contains(text)){
-//
-//        firebaseFirestore.collection(KEY_SEARCH)
-//        .whereEqualTo(KEY_USER_NAME,listItem.get(i).getUserName())
-//        .get()
-//        .addOnCompleteListener(documentReference -> {
-//        String currentUserId1 = preferenceManager.getString(KEY_USER_ID);
-//
-//        if (task.isSuccessful() && task.getResult() != null) {
-//
-//        List<User> userList1 = new ArrayList<>();
-//
-//        for (QueryDocumentSnapshot queryDocumentSnapshot: task.getResult()) {
-//
-//        if (currentUserId1.equals(queryDocumentSnapshot.getString(KEY_SENDER_ID))) {
-//
-//        User user1 = new User();
-//        user1.userName = queryDocumentSnapshot.getString(KEY_RECEIVER_USER_NAME);
-//        user1.email = queryDocumentSnapshot.getString(KEY_RECEIVER_EMAIL);
-//        user1.image = queryDocumentSnapshot.getString(KEY_RECEIVER_IMAGE);
-//        user1.isLiked = String.valueOf(queryDocumentSnapshot.get(KEY_IS_LIKED));
-//        userList1.add(user1);
-//
-//        }
-//
-//        }
-//
-//        if (userList1.size() > 0) {
-//
-//        HistoryAdapter historyAdapter= new HistoryAdapter(userList1);
-//        activityHistoryBinding.usersRecyclerView.setAdapter(historyAdapter);
-//
-//        activityHistoryBinding.usersRecyclerView.setVisibility(View.VISIBLE);
-//
-//        } else {
-//
-//        showErrorMessage();
-//
-//        }
-//
-//        } else {
-//
-//        showErrorMessage();
-//
-//        }
-//        })
-//        .addOnFailureListener(e -> {
-//        showToast(e.getMessage());
-//        });
-//        }
-//        }
-//
-//        } else {
-//
-//        showErrorMessage();
-//
-//        }
-//        });
