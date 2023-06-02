@@ -6,11 +6,12 @@ public class Constants {
 
     public static final int IMAGE_WIDTH = 1920;
     public static final int IMAGE_HEIGHT = 1080;
-    public static final String  KEY_PHONE_NUMBER = "phone";
     public static final String KEY_USER = "user";
     public static final String KEY_COUNT = "count";
     public static final String KEY_SEARCH = "count";
 
+    public static final String KEY_SENDER_NUMBER = "senderNumber";
+    public static final String KEY_NUMBER = "phone number";
     public static final String KEY_IMAGE = "image";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_USER_ID = "userId";

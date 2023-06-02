@@ -10,6 +10,7 @@ import static com.ghovo.c_find_.utilities.Constants.KEY_EMAIL;
 import static com.ghovo.c_find_.utilities.Constants.KEY_IMAGE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_LATITUDE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_LONGITUDE;
+import static com.ghovo.c_find_.utilities.Constants.KEY_NUMBER;
 import static com.ghovo.c_find_.utilities.Constants.KEY_USER_ID;
 import static com.ghovo.c_find_.utilities.Constants.KEY_USER_NAME;
 
@@ -313,6 +314,45 @@ public class SignUpActivity extends AppCompatActivity {
 
         });
 
+        activitySignUpBinding.inputNumber.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                if (encodedImage == null) {
+
+                    activitySignUpBinding.imageProfile.setBackground(AppCompatResources.getDrawable(
+                            getApplicationContext(), R.drawable.background_incorrect_input
+                    ));
+
+                    activitySignUpBinding.textAddImage.setText(R.string.add_image);
+
+                } else {
+
+                    activitySignUpBinding.imageProfile.setBackground(AppCompatResources.getDrawable(
+                            getApplicationContext(), R.drawable.background_correct_input
+                    ));
+
+                    activitySignUpBinding.textAddImage.setText("");
+                }
+                activitySignUpBinding.inputNumber.setBackground(AppCompatResources.getDrawable(
+                        getApplicationContext(), R.drawable.background_incorrect_input
+                ));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                activitySignUpBinding.inputNumber.setBackground(AppCompatResources.getDrawable(
+                        getApplicationContext(), R.drawable.background_correct_input
+                ));
+            }
+
+        });
+
         activitySignUpBinding.inputConfirmPassword.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -424,7 +464,11 @@ public class SignUpActivity extends AppCompatActivity {
             showToast("Passwords doesn't matching");
             return false;
 
-        } else {
+        }else if(activitySignUpBinding.inputNumber.getText().toString().trim().isEmpty()){
+            showToast("Enter phone number");
+            return false;
+        }
+        else {
 
             return true;
 
@@ -541,6 +585,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         userData.put(KEY_LATITUDE, 0.0);
                                         userData.put(KEY_LONGITUDE, 0.0);
                                         userData.put(KEY_DISTANCE, "1000");
+                                        userData.put(KEY_NUMBER,activitySignUpBinding.inputNumber.getText().toString());
 
                                         firebaseFirestore.collection(KEY_COLLECTION_USERS)
                                                 .add(userData)
@@ -548,6 +593,7 @@ public class SignUpActivity extends AppCompatActivity {
                                                     preferenceManager.putString(KEY_USER_ID, documentReference.getId());
                                                     preferenceManager.putString(KEY_USER_NAME, activitySignUpBinding.inputUserName.getText().toString().trim());
                                                     preferenceManager.putString(KEY_IMAGE, encodedImage);
+                                                    preferenceManager.putString(KEY_NUMBER,activitySignUpBinding.inputNumber.getText().toString());
 
                                                     showToast("Sign up is successful\n" +
                                                             "Verify your account");
