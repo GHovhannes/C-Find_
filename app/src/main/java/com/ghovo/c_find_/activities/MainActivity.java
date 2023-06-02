@@ -14,6 +14,7 @@ import static com.ghovo.c_find_.utilities.Constants.KEY_IMAGE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_IS_LIKED;
 import static com.ghovo.c_find_.utilities.Constants.KEY_LATITUDE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_LONGITUDE;
+import static com.ghovo.c_find_.utilities.Constants.KEY_NUMBER;
 import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_EMAIL;
 import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_ID;
 import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_IMAGE;
@@ -21,6 +22,7 @@ import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_USER_NAME;
 import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_EMAIL;
 import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_ID;
 import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_IMAGE;
+import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_NUMBER;
 import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_USER_NAME;
 import static com.ghovo.c_find_.utilities.Constants.KEY_USER_ID;
 import static com.ghovo.c_find_.utilities.Constants.KEY_USER_NAME;
@@ -217,6 +219,7 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
             usersData.put(KEY_SENDER_IMAGE, preferenceManager.getString(KEY_IMAGE));
             usersData.put(KEY_SENDER_USER_NAME, preferenceManager.getString(KEY_USER_NAME));
             usersData.put(KEY_SENDER_EMAIL, preferenceManager.getString(KEY_EMAIL));
+            usersData.put(KEY_SENDER_NUMBER,preferenceManager.getString(KEY_NUMBER));
             usersData.put(KEY_RECEIVER_ID, receiverUser.id);
 
             firebaseFirestore.collection(KEY_COLLECTION_REQUEST)

@@ -10,6 +10,7 @@ import static com.ghovo.c_find_.utilities.Constants.KEY_IMAGE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_IS_LIKED;
 import static com.ghovo.c_find_.utilities.Constants.KEY_LATITUDE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_LONGITUDE;
+import static com.ghovo.c_find_.utilities.Constants.KEY_NUMBER;
 import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_EMAIL;
 import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_ID;
 import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_IMAGE;
@@ -17,6 +18,7 @@ import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_USER_NAME;
 import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_EMAIL;
 import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_ID;
 import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_IMAGE;
+import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_NUMBER;
 import static com.ghovo.c_find_.utilities.Constants.KEY_SENDER_USER_NAME;
 import static com.ghovo.c_find_.utilities.Constants.KEY_USER_ID;
 import static com.ghovo.c_find_.utilities.Constants.KEY_USER_NAME;
@@ -143,7 +145,7 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
                                 User user = new User();
                                 user.userName = queryDocumentSnapshot.getString(KEY_SENDER_USER_NAME);
                                 user.image = queryDocumentSnapshot.getString(KEY_SENDER_IMAGE);
-                                user.email = queryDocumentSnapshot.getString(KEY_SENDER_EMAIL);
+                                user.email = queryDocumentSnapshot.getString(KEY_SENDER_NUMBER);
                                 user.id = queryDocumentSnapshot.getId();
                                 userList.add(user);
 
@@ -193,38 +195,14 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
     @Override
     public void onUserClicked(User user) {
 
-        preferenceManager.putString(KEY_RECEIVER_IMAGE, user.image);
-        preferenceManager.putString(KEY_RECEIVER_ID, user.id);
-        preferenceManager.putString(KEY_RECEIVER_USER_NAME, user.userName);
-
-        this.receiverUser = user;
-
-        showDialog(user.image);
-
     }
     private void showDialog(String encodedImage) {
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        UserInfoDialog userInfoDialog = new UserInfoDialog(getReceiverUserImage(encodedImage), this);
-
-        userInfoDialog.show(fragmentManager, "dialog");
 
     }
     @Override
     public void onButtonClicked(Boolean flag) {
 
-        isLiked = flag;
-
-        if (flag) {
-
-            checkForRequest(preferenceManager.getString(KEY_USER_ID), receiverUser.id);
-            checkForHistory(preferenceManager.getString(KEY_USER_ID), receiverUser.id);
-
-        } else {
-
-            checkForHistory(preferenceManager.getString(KEY_USER_ID), receiverUser.id);
-
-        }
     }
     private void checkForHistory(String senderId, String receiverId) {
 
@@ -282,6 +260,7 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
             usersData.put(KEY_SENDER_IMAGE, preferenceManager.getString(KEY_IMAGE));
             usersData.put(KEY_SENDER_USER_NAME, preferenceManager.getString(KEY_USER_NAME));
             usersData.put(KEY_SENDER_EMAIL, preferenceManager.getString(KEY_EMAIL));
+            usersData.put(KEY_SENDER_NUMBER,preferenceManager.getString(KEY_NUMBER));
             usersData.put(KEY_RECEIVER_ID, receiverUser.id);
 
             firebaseFirestore.collection(KEY_COLLECTION_REQUEST)
