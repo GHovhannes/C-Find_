@@ -40,6 +40,7 @@
             android:layout_width="wrap_content"
             android:layout_height="@dimen/_35sdp"
             android:id="@+id/active_or_not"
+            android:checked="true"
             android:text="@string/am_i_active_for_search"/>
 
         <com.google.android.material.button.MaterialButton

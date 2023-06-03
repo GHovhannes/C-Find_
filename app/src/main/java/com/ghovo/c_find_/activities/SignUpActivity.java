@@ -582,8 +582,8 @@ public class SignUpActivity extends AppCompatActivity {
                                         userData.put(KEY_EMAIL, activitySignUpBinding.inputEmail.getText().toString());
                                         userData.put(KEY_IMAGE, encodedImage);
                                         userData.put(KEY_ACTIVITY_FOR_SEARCH, true);
-                                        userData.put(KEY_LATITUDE, 0.0);
-                                        userData.put(KEY_LONGITUDE, 0.0);
+                                        userData.put(KEY_LATITUDE, "0.0");
+                                        userData.put(KEY_LONGITUDE, "0.0");
                                         userData.put(KEY_DISTANCE, "1000");
                                         userData.put(KEY_NUMBER,activitySignUpBinding.inputNumber.getText().toString());
 
