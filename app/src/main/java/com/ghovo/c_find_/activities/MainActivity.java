@@ -251,13 +251,22 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 //                            double longitudeInput = Double.parseDouble(Objects.requireNonNull(queryDocumentSnapshot.getString(KEY_LONGITUDE)));
 
                             if (!currentUserId.equals(queryDocumentSnapshot.getId())) {
-                                User user = new User();
-                                user.userName = queryDocumentSnapshot.getString(KEY_USER_NAME);
-                                user.email = queryDocumentSnapshot.getString(KEY_EMAIL);
-                                user.image = queryDocumentSnapshot.getString(KEY_IMAGE);
-                                user.token = queryDocumentSnapshot.getString(KEY_FCM_TOKEN);
-                                user.id = queryDocumentSnapshot.getId();
-                                userList.add(user);
+                                String userLatitude = queryDocumentSnapshot.getString(KEY_LATITUDE);
+                                String userLongitude = queryDocumentSnapshot.getString(KEY_LONGITUDE);
+                                String distance = queryDocumentSnapshot.getString(KEY_DISTANCE);
+
+                                assert distance != null;
+                                assert userLongitude != null;
+                                assert userLatitude != null;
+                                if(ifDistanceIsOk(Double.parseDouble(userLatitude),Double.parseDouble(userLongitude),Double.parseDouble(distance))) {
+                                    User user = new User();
+                                    user.userName = queryDocumentSnapshot.getString(KEY_USER_NAME);
+                                    user.email = queryDocumentSnapshot.getString(KEY_EMAIL);
+                                    user.image = queryDocumentSnapshot.getString(KEY_IMAGE);
+                                    user.token = queryDocumentSnapshot.getString(KEY_FCM_TOKEN);
+                                    user.id = queryDocumentSnapshot.getId();
+                                    userList.add(user);
+                                }
                             }
 
 //                            Log.d("HELLO", "ISDistanceOk: " + ifDistanceIsOk(latitudeInput, longitudeInput));
@@ -518,26 +527,6 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         }
     }
 
-//    private void getCurrentLocation() {
-//        // Get user's location using LocationManager
-//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        if (locationManager != null) {
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-//            if (location != null) {
-//                latitude = location.getLatitude();
-//                longitude = location.getLongitude();
-//            } else {
-//                // Location data not available
-//                Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
-//            }
-//        } else {
-//            // Location manager not available
-//            Toast.makeText(this, "Try to turn on 'Location Access' in settings", Toast.LENGTH_SHORT).show();
-//        }
-//    }
     private void updateDatabase(){
         DocumentReference documentReferenceStatus = firebaseFirestore.collection(KEY_COLLECTION_USERS)
                 .document(preferenceManager.getString(KEY_USER_ID));
@@ -545,24 +534,23 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         documentReferenceStatus.update(KEY_LONGITUDE,longitude);
     }
 
-//    private boolean ifDistanceIsOk(double latitudeInput, double longitudeInput) {
-//        int earthRadius = 6371;
-//
-//        double latDistance = Math.toRadians(latitudeCurrent - latitudeInput);
-//        double lonDistance = Math.toRadians(longitudeCurrent - longitudeInput);
-//
-//        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-//                + Math.cos(Math.toRadians(latitudeInput)) * Math.cos(Math.toRadians(latitudeCurrent))
-//                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-//
-//        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-//
-//        double distance = earthRadius * c * 1000;
-//
-//        Log.d("HELLO", "DISTANCE: " + distance);
-//
-//        return distance <= this.distance;
-//    }
+    private boolean ifDistanceIsOk(double latitudeInput, double longitudeInput, double chosenDistance) {
+        int earthRadius = 6371;
+
+        double latDistance = Math.toRadians(latitude - latitudeInput);
+        double lonDistance = Math.toRadians(longitude - longitudeInput);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(latitudeInput)) * Math.cos(Math.toRadians(latitude))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        double distance = earthRadius * c * 1000;
+
+
+        return distance<=chosenDistance;
+    }
 
     @Override
     protected void onPause() {
