@@ -527,11 +527,12 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         }
     }
 
+
     private void updateDatabase(){
         DocumentReference documentReferenceStatus = firebaseFirestore.collection(KEY_COLLECTION_USERS)
                 .document(preferenceManager.getString(KEY_USER_ID));
-        documentReferenceStatus.update(KEY_LATITUDE,latitude);
-        documentReferenceStatus.update(KEY_LONGITUDE,longitude);
+        documentReferenceStatus.update(KEY_LATITUDE,String.valueOf(latitude));
+        documentReferenceStatus.update(KEY_LONGITUDE,String.valueOf(longitude));
     }
 
     private boolean ifDistanceIsOk(double latitudeInput, double longitudeInput, double chosenDistance) {
@@ -548,7 +549,12 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 
         double distance = earthRadius * c * 1000;
 
-
+//        Log.d("hello", "Lat: " + latitudeInput);
+//        Log.d("hello", "Long: " + longitudeInput);
+//
+//        Log.d("hello", "LAT: " + latitude);
+//        Log.d("hello", "LONG: " + longitude);
+//        Log.d("hello", "ifDistanceIsOk: " + distance);
         return distance<=chosenDistance;
     }
 
