@@ -44,4 +44,7 @@
     <string name="permission_denied_permanently">Permission Denied Permanently</string>
     <string name="save_changes">Save changes</string>
     <string name="phone_number">Phone Number</string>
+    <string name="pick_the_location">Pick the meeting place</string>
+    <string name="send">Send</string>
+    <string name="notifications_and_meetings">Notifications and meetings</string>
 </resources>

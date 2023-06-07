@@ -1,13 +1,12 @@
 package com.ghovo.c_find_.adapters;
 
-
-
 import static com.ghovo.c_find_.utilities.Constants.IMAGE_HEIGHT;
 import static com.ghovo.c_find_.utilities.Constants.IMAGE_WIDTH;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.net.Uri;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -15,53 +14,53 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ghovo.c_find_.databinding.ItemContainerUserBinding;
+import com.ghovo.c_find_.databinding.NotificationsItemBinding;
 import com.ghovo.c_find_.listeners.UserListener;
 import com.ghovo.c_find_.models.User;
 
-
 import java.util.List;
 
-public class LikesAdapter extends RecyclerView.Adapter<LikesAdapter.NotificationsViewHolder>{
-
+public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdapter.NotificationsViewHolder>{
     private final List<User> userList;
     private final UserListener userListener;
 
-    public LikesAdapter(List<User> userList, UserListener userListener) {
+    public NotificationsAdapter(List<User> userList, UserListener userListener) {
         this.userList = userList;
         this.userListener = userListener;
     }
 
     class NotificationsViewHolder extends RecyclerView.ViewHolder {
 
-        ItemContainerUserBinding itemContainerUserBinding;
+        NotificationsItemBinding itemBinding;
 
-        NotificationsViewHolder(ItemContainerUserBinding itemContainerUserBinding) {
+        NotificationsViewHolder(NotificationsItemBinding itemContainerUserBinding) {
 
             super(itemContainerUserBinding.getRoot());
-            this.itemContainerUserBinding = itemContainerUserBinding;
+            this.itemBinding = itemContainerUserBinding;
 
         }
 
         void setUserData(User user) {
 
-            itemContainerUserBinding.textUserName.setText(user.userName);
-            itemContainerUserBinding.textEmail.setText(user.email);
+            itemBinding.textUserName.setText(user.userName);
+            itemBinding.textEmail.setText(user.number);
 
-            itemContainerUserBinding.imageProfile.setImageBitmap(
+            itemBinding.meetingPlace.setImageURI(Uri.parse(user.notification));
+
+            itemBinding.imageProfile.setImageBitmap(
                     getResizedBitmap(getUserImage(user.image)
                     ));
 
-            itemContainerUserBinding.getRoot().setOnClickListener(v -> userListener.onUserClicked(user));
+            itemBinding.getRoot().setOnClickListener(v -> userListener.onUserClicked(user));
 
         }
     }
 
     @NonNull
     @Override
-    public NotificationsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NotificationsAdapter.NotificationsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        ItemContainerUserBinding itemContainerUserBinding = ItemContainerUserBinding.inflate(
+        NotificationsItemBinding itemBinding = NotificationsItemBinding.inflate(
 
                 LayoutInflater.from(parent.getContext()),
                 parent,
@@ -69,12 +68,12 @@ public class LikesAdapter extends RecyclerView.Adapter<LikesAdapter.Notification
 
         );
 
-        return new NotificationsViewHolder(itemContainerUserBinding);
+        return new NotificationsAdapter.NotificationsViewHolder(itemBinding);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NotificationsViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull NotificationsAdapter.NotificationsViewHolder holder, int position) {
 
         holder.setUserData(userList.get(position));
 
@@ -111,4 +110,3 @@ public class LikesAdapter extends RecyclerView.Adapter<LikesAdapter.Notification
 
     }
 }
-

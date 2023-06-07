@@ -1,15 +1,10 @@
 package com.ghovo.c_find_.activities;
 
-import static com.ghovo.c_find_.utilities.Constants.KEY_ACTIVITY_FOR_SEARCH;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_HISTORY;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_REQUEST;
-import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_USERS;
 import static com.ghovo.c_find_.utilities.Constants.KEY_EMAIL;
-import static com.ghovo.c_find_.utilities.Constants.KEY_FCM_TOKEN;
 import static com.ghovo.c_find_.utilities.Constants.KEY_IMAGE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_IS_LIKED;
-import static com.ghovo.c_find_.utilities.Constants.KEY_LATITUDE;
-import static com.ghovo.c_find_.utilities.Constants.KEY_LONGITUDE;
 import static com.ghovo.c_find_.utilities.Constants.KEY_NUMBER;
 import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_EMAIL;
 import static com.ghovo.c_find_.utilities.Constants.KEY_RECEIVER_ID;
@@ -30,17 +25,12 @@ import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.Base64;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
-import androidx.fragment.app.FragmentManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ghovo.c_find_.R;
 import com.ghovo.c_find_.adapters.LikesAdapter;
-import com.ghovo.c_find_.adapters.UsersAdapter;
 import com.ghovo.c_find_.databinding.ActivityLikesBinding;
-import com.ghovo.c_find_.databinding.ActivityMainBinding;
-import com.ghovo.c_find_.dialogs.UserInfoDialog;
 import com.ghovo.c_find_.listeners.DialogListener;
 import com.ghovo.c_find_.listeners.UserListener;
 import com.ghovo.c_find_.models.User;
@@ -54,7 +44,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;;import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 public class LikesActivity extends BaseActivity implements UserListener, DialogListener {
 
@@ -75,6 +64,13 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
         loadUserDetails();
         setListeners();
         getUsers();
+        activityLikesBinding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                activityLikesBinding.swipeRefresh.setRefreshing(false);
+                getUsers();
+            }
+        });
     }
     private void setListeners() {
         activityLikesBinding.backToMain.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), MainActivity.class)));
@@ -84,6 +80,8 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
         activityLikesBinding.searchImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), HistoryActivity.class)));
 
         activityLikesBinding.accountImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AccountActivity.class)));
+
+        activityLikesBinding.toMeetings.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),NotificationsActivity.class)));
     }
     private void loadUserDetails() {
 
@@ -121,7 +119,7 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
 
     }
     private void getUsers() {
-        loading(true);
+        //loading(true);
         String currentUserId = preferenceManager.getString(KEY_USER_ID);
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection(KEY_COLLECTION_REQUEST).whereEqualTo(KEY_RECEIVER_ID,currentUserId)
@@ -194,15 +192,14 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
     }
     @Override
     public void onUserClicked(User user) {
-
+        String currentUser = preferenceManager.getString(KEY_USER_NAME);
+        String receiverUser = user.userName;
+        Intent intent = new Intent(this, MeetingActivity.class);
+        intent.putExtra(KEY_SENDER_USER_NAME, currentUser);
+        intent.putExtra(KEY_RECEIVER_USER_NAME,receiverUser);
+        startActivity(intent);
     }
-    private void showDialog(String encodedImage) {
-
-
-    }
-    @Override
-    public void onButtonClicked(Boolean flag) {
-
+    private void showDialog(String encodedImage){
     }
     private void checkForHistory(String senderId, String receiverId) {
 
@@ -269,4 +266,9 @@ public class LikesActivity extends BaseActivity implements UserListener, DialogL
         }
 
     };
+
+    @Override
+    public void onButtonClicked(Boolean flag) {
+
+    }
 }

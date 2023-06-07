@@ -2,7 +2,6 @@ package com.ghovo.c_find_.activities;
 
 
 
-import static androidx.core.location.LocationManagerCompat.requestLocationUpdates;
 import static com.ghovo.c_find_.utilities.Constants.KEY_ACTIVITY_FOR_SEARCH;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_HISTORY;
 import static com.ghovo.c_find_.utilities.Constants.KEY_COLLECTION_REQUEST;
@@ -50,6 +49,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ghovo.c_find_.R;
 import com.ghovo.c_find_.adapters.UsersAdapter;
@@ -68,9 +68,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -93,6 +96,12 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
     private ActivityMainBinding activityMainBinding;
     private LocationCallback locationCallback;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private Handler handler;
+    private Runnable runnable;
+    private static final int DELAY_DURATION = 3000; // 3 seconds
+    private FirebaseFirestore firestore;
+    private Query query;
+
 
 
     @Override
@@ -128,8 +137,23 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         getUsers();
 
         setListeners();
+        activityMainBinding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                activityMainBinding.swipeRefresh.setRefreshing(false);
+                getUsers();
+            }
+        });
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationUpdates();
+    }
+
+
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -168,6 +192,8 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         activityMainBinding.accountImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AccountActivity.class)));
 
         activityMainBinding.likesImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), LikesActivity.class)));
+
+        activityMainBinding.toMeetings.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), NotificationsActivity.class)));
 
     }
 
@@ -230,7 +256,7 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
     };
 
     private void getUsers() {
-        loading(true);
+        //loading(true);
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection(KEY_COLLECTION_USERS).whereEqualTo(KEY_ACTIVITY_FOR_SEARCH,true)
@@ -556,13 +582,6 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
 //        Log.d("hello", "LONG: " + longitude);
 //        Log.d("hello", "ifDistanceIsOk: " + distance);
         return distance<=chosenDistance;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        stopLocationUpdates();
     }
 
     private void stopLocationUpdates() {
