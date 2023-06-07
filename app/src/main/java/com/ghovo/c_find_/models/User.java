@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    public String userName, image, email, token, id, isLiked,number;
+    public String userName, image, email, token, id, isLiked,number,notification;
 
     public String getUserName() {
         return userName;

@@ -8,10 +8,35 @@
     android:background="@color/white"
     tools:context=".activities.MainActivity">
 
+
+    <ImageView
+        android:id="@+id/likesImage"
+        android:layout_width="50dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="88dp"
+        android:contentDescription="@string/app_name"
+        android:paddingBottom="4dp"
+        android:src="@drawable/ic_heart"
+        app:layout_constraintEnd_toStartOf="@id/imageSignOut"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/to_meetings"
+        android:layout_width="68dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="12dp"
+        android:padding="@dimen/_5sdp"
+        android:src="@drawable/notification"
+        app:layout_constraintStart_toEndOf="@id/likesImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
+        android:id="@+id/text"
+        android:layout_width="207dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/grand_hotel"
         android:paddingStart="20dp"
         android:paddingEnd="10dp"
@@ -20,20 +45,9 @@
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/likesImage"
+        app:layout_constraintHorizontal_bias="0.252"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/likesImage"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:src="@drawable/ic_heart"
-        app:layout_constraintEnd_toStartOf="@id/imageSignOut"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="10dp"
-        android:paddingBottom="4dp"
-        android:contentDescription="@string/app_name" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageSignOut"
@@ -56,6 +70,10 @@
         app:layout_constraintTop_toBottomOf="@id/likesImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/swipe_refresh">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/usersRecyclerView"
@@ -67,6 +85,7 @@
             android:padding="26dp"
             android:visibility="gone"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <ProgressBar
             android:id="@id/progressBar"
@@ -101,7 +120,6 @@
             android:layout_width="@dimen/_105sdp"
             android:layout_height="match_parent"
             android:src="@drawable/ic_home"
-            android:padding="@dimen/_10sdp"
             android:contentDescription="@string/app_name" />
 
         <ImageView
@@ -109,7 +127,6 @@
             android:layout_width="@dimen/_105sdp"
             android:layout_height="match_parent"
             android:src="@drawable/ic_search"
-            android:padding="@dimen/_10sdp"
             android:contentDescription="@string/app_name" />
 
         <com.makeramen.roundedimageview.RoundedImageView

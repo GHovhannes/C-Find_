@@ -49,6 +49,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ghovo.c_find_.R;
 import com.ghovo.c_find_.adapters.UsersAdapter;
@@ -126,15 +127,6 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
             }
         };
 
-        handler = new Handler();
-        runnable = new Runnable() {
-            @Override
-            public void run() {
-                checkForUpdates();
-                handler.postDelayed(this, 3000); // Run every 3 seconds
-            }
-        };
-        handler.postDelayed(runnable, 3000);
         checkLocationPermission();
 
         setContentView(activityMainBinding.getRoot());
@@ -145,43 +137,22 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         getUsers();
 
         setListeners();
+        activityMainBinding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                activityMainBinding.swipeRefresh.setRefreshing(false);
+                getUsers();
+            }
+        });
 
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        handler.post(runnable); // Start the periodic checking
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        handler.removeCallbacks(runnable); // Stop the periodic checking
         stopLocationUpdates();
     }
 
-    private void checkForUpdates() {
-        firestore = FirebaseFirestore.getInstance();
-        query = firestore.collection("request");
-        query.get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                QuerySnapshot snapshot = task.getResult();
-                if (snapshot != null) {
-                    for (DocumentChange change : snapshot.getDocumentChanges()) {
-                        if (change.getType() == DocumentChange.Type.ADDED) {
-                            // Display toast when a document is added
-                            Toast.makeText(MainActivity.this, "Someone liked you, check it", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                }
-            } else {
-                FirebaseFirestoreException exception = (FirebaseFirestoreException) task.getException();
-                if (exception != null) {
-                    // Handle the exception
-                }
-            }
-        });
-    }
 
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -221,6 +192,8 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
         activityMainBinding.accountImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), AccountActivity.class)));
 
         activityMainBinding.likesImage.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), LikesActivity.class)));
+
+        activityMainBinding.toMeetings.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(), NotificationsActivity.class)));
 
     }
 
@@ -283,7 +256,7 @@ public class MainActivity extends BaseActivity implements UserListener, DialogLi
     };
 
     private void getUsers() {
-        loading(true);
+        //loading(true);
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection(KEY_COLLECTION_USERS).whereEqualTo(KEY_ACTIVITY_FOR_SEARCH,true)

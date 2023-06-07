@@ -9,7 +9,8 @@ public class Constants {
     public static final String KEY_USER = "user";
     public static final String KEY_COUNT = "count";
     public static final String KEY_SEARCH = "count";
-
+    public static final String KEY_PLACE = "Place";
+    public static final String KEY_TIME = "Time";
     public static final String KEY_SENDER_NUMBER = "senderNumber";
     public static final String KEY_NUMBER = "phone number";
     public static final String KEY_IMAGE = "image";

@@ -40,6 +40,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 public class AccountActivity extends BaseActivity {
     private ActivityAccountBinding activityAccountBinding;
@@ -122,6 +123,7 @@ public class AccountActivity extends BaseActivity {
                 activityAccountBinding.saveChanges.setVisibility(View.VISIBLE);
             }
         });
+
         activityAccountBinding.saveChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -131,6 +133,7 @@ public class AccountActivity extends BaseActivity {
                 documentReferenceStatus.update(KEY_DISTANCE, String.valueOf(progress));
                 documentReferenceStatus.update(KEY_IMAGE,encodedImage);
                 preferenceManager.putString(KEY_IMAGE,encodedImage);
+                loadUserDetails();
                 activityAccountBinding.saveChanges.setVisibility(View.GONE);
                 Toast.makeText(AccountActivity.this, "Changes saved", Toast.LENGTH_SHORT).show();
             }

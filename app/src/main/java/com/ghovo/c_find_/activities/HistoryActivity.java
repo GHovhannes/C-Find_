@@ -29,6 +29,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.ghovo.c_find_.R;
 import com.ghovo.c_find_.adapters.HistoryAdapter;
@@ -84,6 +85,13 @@ public class HistoryActivity extends BaseActivity {
                 return true;
             }
         });
+        activityHistoryBinding.swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                activityHistoryBinding.swipeRefresh.setRefreshing(false);
+                getUserHistory();
+            }
+        });
     }
 
     private void setListeners() {
@@ -113,7 +121,7 @@ public class HistoryActivity extends BaseActivity {
         });
     }
     private void getUserHistory() {
-        loading(true);
+        //loading(true);
 
         FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
         firebaseFirestore.collection(KEY_COLLECTION_HISTORY)
